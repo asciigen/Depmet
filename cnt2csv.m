@@ -1,7 +1,13 @@
 clear all;
 cd C:\Users\Deepak\Documents\Depmet\Depmet;
-cntStruct = loadcnt('Sushi.cnt');
-cntdata = cntStruct.data;
+cnt = loadcnt('Sushi.cnt');
+cntdata = transpose(cnt.data);
 disp('Writting csv file');
-csvwrite('Sushi.csv', transpose(cntStruct.data));
-disp('Finish');
+n = cnt.header.nchannels;
+samp = cnt.header.numsamples + 1;
+lab = 1:n;
+csvdata = zeros(samp,n);
+csvdata(1,:) = lab;
+csvdata(2:samp,1:n) = cntdata;
+csvwrite('Sushi.csv', csvdata);
+disp('Conversion completed');
