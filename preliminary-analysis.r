@@ -31,9 +31,10 @@ write.csv(od,"out.csv")
 # Variable initialization
 # Iteration variable initialization 
 i <- 1; j <- 2; k <-0
-
+n <- 0; p <- 0; nc <- 0; pc <- 0;
+ncp <- 0; pcm <- 0;
 # Counter variable initialization
-neg <- 0; pos <- 0; zero_cross_counter <- 0
+neg <- 0; pos <- 0; cc <- 0;
 
 # Get summary for one electrode channel
 summ = summary(od$FT8)
@@ -43,7 +44,30 @@ od2$FT8 <- as.numeric(as.character(od2$FT8))
 C = length(od2$FT8)
 for(i in 1:C)
 {
+  if(od2$FT8[i] < 0)
+    n = n + 1
   if(od2$FT8[i] > 0)
-    print(paste("Value of i is", od2$FT8[i]))
+    p = p + 1
+  if(i==C-1)
+  {
+    if(od2$FT8[i+1] < 0)
+      n = n + 1
+    else
+      p = p + 1
+  }
+  if(((od2$FT8[i] < 0 ) && (od2$FT8[i+1] > 0)) || ((od2$FT8[i] > 0 ) && (od2$FT8[i+1] < 0)))
+    cc = cc + 1;
+  if(od2$FT8[i] > 0 && od2$FT8[i+1] > 0)
+  {
+    pc++
+    if(pcm <= pc)
+      pcm = pc;
+  }
+  if(od2$FT8[i] < 0 && od2$FT8[i+1] < 0)
+  {
+    nc++
+    if(ncm <= nc)
+      ncm = nc;
+  }
 }
 
