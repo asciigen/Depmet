@@ -1,3 +1,7 @@
+% This is a matlab program to convert a .CNT file into .CSV data file
+% License: The MIT License (MIT)
+% Author: Vinita Kumawat, Deepak Sharma
+
 clear all;
 cd C:\Users\Deepak\Documents\Depmet\Depmet;
 cnt = loadcnt('Sushi.cnt');
