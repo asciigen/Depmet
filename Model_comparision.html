@@ -1,0 +1,156 @@
+<html>
+  <head>
+<style type="text/css">
+.knitr .inline {
+  background-color: #f7f7f7;
+  border:solid 1px #B0B0B0;
+}
+.error {
+	font-weight: bold;
+	color: #FF0000;
+}
+.warning {
+	font-weight: bold;
+}
+.message {
+	font-style: italic;
+}
+.source, .output, .warning, .error, .message {
+	padding: 0 1em;
+  border:solid 1px #F7F7F7;
+}
+.source {
+  background-color: #f5f5f5;
+}
+.rimage .left {
+  text-align: left;
+}
+.rimage .right {
+  text-align: right;
+}
+.rimage .center {
+  text-align: center;
+}
+.hl.num {
+  color: #AF0F91;
+}
+.hl.str {
+  color: #317ECC;
+}
+.hl.com {
+  color: #AD95AF;
+  font-style: italic;
+}
+.hl.opt {
+  color: #000000;
+}
+.hl.std {
+  color: #585858;
+}
+.hl.kwa {
+  color: #295F94;
+  font-weight: bold;
+}
+.hl.kwb {
+  color: #B05A65;
+}
+.hl.kwc {
+  color: #55aa55;
+}
+.hl.kwd {
+  color: #BC5A65;
+  font-weight: bold;
+}
+</style>
+    <title>Comparision of various models</title>
+  </head>
+
+<body>
+  <p>
+    This page compares various models which were used for classification of depression data.
+  </p>
+
+<div class="chunk" id="unnamed-chunk-1"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl com"># Import libraries --------------------------------------------------------</span>
+
+<span class="hl kwd">library</span><span class="hl std">(datasets)</span>
+<span class="hl kwd">library</span><span class="hl std">(psych)</span>
+<span class="hl kwd">library</span><span class="hl std">(ggplot2)</span>
+</pre></div>
+<div class="message"><pre class="knitr r">## 
+## Attaching package: 'ggplot2'
+</pre></div>
+<div class="message"><pre class="knitr r">## The following objects are masked from 'package:psych':
+## 
+##     %+%, alpha
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl com"># Import data -------------------------------------------------------------</span>
+
+<span class="hl std">depression_vs_control</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">read.csv</span><span class="hl std">(</span><span class="hl str">&quot;depression_vs_control.csv&quot;</span><span class="hl std">)</span>
+<span class="hl std">dvc</span> <span class="hl kwb">&lt;-</span> <span class="hl std">depression_vs_control</span>
+<span class="hl kwd">attach</span><span class="hl std">(dvc)</span>
+<span class="hl kwd">headTail</span><span class="hl std">(dvc)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">##     Negatives Positives Fluctuations       Type
+## 1        1196      1201           69     Normal
+## 2        1183      1188           68     Normal
+## 3        1197      1202           72     Normal
+## 4        1193      1185           61     Normal
+## ...       ...       ...          ...       &lt;NA&gt;
+## 93       1036      1077           29 Depression
+## 94       1060      1056           81 Depression
+## 95       1025      1016           40 Depression
+## 96       1084      1112           44 Depression
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl com"># K means clustering ------------------------------------------------------</span>
+
+<span class="hl kwd">set.seed</span><span class="hl std">(</span><span class="hl num">10</span><span class="hl std">)</span>
+<span class="hl std">dvc_cluster</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">kmeans</span><span class="hl std">(dvc[,</span> <span class="hl num">1</span><span class="hl opt">:</span><span class="hl num">3</span><span class="hl std">],</span> <span class="hl num">2</span><span class="hl std">,</span> <span class="hl kwc">nstart</span> <span class="hl std">=</span> <span class="hl num">10</span><span class="hl std">)</span>
+<span class="hl std">dvc_cluster</span>
+</pre></div>
+<div class="output"><pre class="knitr r">## K-means clustering with 2 clusters of sizes 56, 40
+## 
+## Cluster means:
+##   Negatives Positives Fluctuations
+## 1  1219.964  1197.286     56.57143
+## 2  1137.150  1093.650     40.30000
+## 
+## Clustering vector:
+##  [1] 1 1 1 1 2 2 2 1 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 1
+## [36] 1 1 1 2 1 1 1 1 1 2 2 2 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1
+## [71] 1 1 1 1 1 1 1 1 2 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2
+## 
+## Within cluster sum of squares by cluster:
+## [1] 337421.1 208154.6
+##  (between_SS / total_SS =  43.3 %)
+## 
+## Available components:
+## 
+## [1] &quot;cluster&quot;      &quot;centers&quot;      &quot;totss&quot;        &quot;withinss&quot;    
+## [5] &quot;tot.withinss&quot; &quot;betweenss&quot;    &quot;size&quot;         &quot;iter&quot;        
+## [9] &quot;ifault&quot;
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">table</span><span class="hl std">(dvc_cluster</span><span class="hl opt">$</span><span class="hl std">cluster, Type)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">##    Type
+##     Depression Normal
+##   1         24     32
+##   2         24     16
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl std">dvc_cluster</span><span class="hl opt">$</span><span class="hl std">cluster</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">as.factor</span><span class="hl std">(dvc_cluster</span><span class="hl opt">$</span><span class="hl std">cluster)</span>
+</pre></div>
+</div></div>
+
+<p>Visualizing differences</p>
+
+<div class="chunk" id="unnamed-chunk-2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl com"># Original data plot</span>
+<span class="hl kwd">ggplot</span><span class="hl std">(dvc,</span> <span class="hl kwd">aes</span><span class="hl std">(Negatives, Positives, Fluctuations,</span> <span class="hl kwc">color</span> <span class="hl std">= Type))</span> <span class="hl opt">+</span> <span class="hl kwd">geom_point</span><span class="hl std">()</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-2-1.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" class="plot" /></div></div>
+
+<div class="chunk" id="unnamed-chunk-3"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl com"># Cluster plot</span>
+<span class="hl kwd">ggplot</span><span class="hl std">(dvc,</span> <span class="hl kwd">aes</span><span class="hl std">(Negatives, Positives, Fluctuations,</span> <span class="hl kwc">color</span> <span class="hl std">= dvc_cluster</span><span class="hl opt">$</span><span class="hl std">cluster))</span> <span class="hl opt">+</span> <span class="hl kwd">geom_point</span><span class="hl std">()</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-3-1.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" class="plot" /></div></div>
+
+</body>
+</html>
